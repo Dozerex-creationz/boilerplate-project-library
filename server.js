@@ -8,9 +8,9 @@ require('dotenv').config();
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
-
+const mongo=require("mongoose");
 const app = express();
-
+mongo.connect(process.env.MONGO_URI);
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(cors({origin: '*'})); //USED FOR FCC TESTING PURPOSES ONLY!
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //Index page (static HTML)
 app.route('/')
-  .get(function (req, res) {
+  .get(function (req, res) {  
     res.sendFile(process.cwd() + '/views/index.html');
   });
 
@@ -28,7 +28,7 @@ app.route('/')
 fccTestingRoutes(app);
 
 //Routing for API 
-apiRoutes(app);  
+apiRoutes(app,mongo);  
     
 //404 Not Found Middleware
 app.use(function(req, res, next) {
